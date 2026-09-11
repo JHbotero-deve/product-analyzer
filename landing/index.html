@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Radar de Producto — Análisis inteligente de moda en Mercado Libre, Amazon y TikTok</title>
+<meta name="description" content="Plataforma de análisis y comparación de productos de moda entre Mercado Libre, Amazon y TikTok Shop, con scoring de oportunidad y visor 3D." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #0A0B10;
+    --panel: #12141C;
+    --line: #2A2E3D;
+    --text: #E8E9F2;
+    --text-dim: #8286A0;
+    --volt: #C6FF3D;
+    --plasma: #7C4DFF;
+    --amber: #FFB020;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--void);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 { font-family: 'Chakra Petch', sans-serif; font-weight: 600; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 26px 0; border-bottom: 1px solid var(--line);
+  }
+  .brand { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 20px; }
+  .brand span { color: var(--volt); }
+  nav a { color: var(--text-dim); text-decoration: none; font-size: 14px; margin-left: 26px; }
+  nav a:hover { color: var(--text); }
+
+  header.hero {
+    position: relative;
+    padding: 84px 0 66px;
+    border-bottom: 1px solid var(--line);
+    background-image:
+      linear-gradient(rgba(124,77,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,77,255,0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  header.hero::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 25% 15%, transparent 30%, var(--void) 88%);
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; z-index: 1; }
+  .eyebrow {
+    display: inline-flex; color: var(--volt);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(198,255,61,0.35);
+    padding: 5px 12px;
+    background: rgba(198,255,61,0.06);
+  }
+  h1 {
+    font-size: 46px; line-height: 1.1; max-width: 760px; margin-bottom: 22px;
+  }
+  h1 span.hl { color: var(--volt); }
+  .lede { color: var(--text-dim); font-size: 17px; max-width: 560px; margin-bottom: 34px; }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 24px; font-size: 14.5px; font-weight: 600;
+    font-family: 'Chakra Petch', sans-serif;
+    text-decoration: none; cursor: pointer; border: none;
+  }
+  .btn-primary { background: var(--volt); color: var(--void); }
+  .btn-secondary { background: none; color: var(--text); border: 1px solid var(--line); }
+  .btn-secondary:hover { border-color: var(--plasma); color: var(--plasma); }
+
+  .platforms { display: flex; gap: 10px; margin-top: 36px; flex-wrap: wrap; }
+  .platform-tag {
+    font-size: 12px; font-family: 'JetBrains Mono', monospace;
+    padding: 5px 12px; color: var(--text-dim); border: 1px solid var(--line);
+  }
+
+  section { padding: 68px 0; border-bottom: 1px solid var(--line); }
+  .section-label {
+    color: var(--plasma); font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; margin-bottom: 14px;
+  }
+  h2 { font-size: 30px; max-width: 600px; margin-bottom: 36px; }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+  .feature { border-top: 2px solid var(--plasma); padding-top: 18px; }
+  .feature h3 { font-size: 17px; margin-bottom: 10px; }
+  .feature p { color: var(--text-dim); font-size: 14px; }
+
+  .revenue-row { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); }
+  .revenue-col { padding: 26px 22px; border-right: 1px solid var(--line); }
+  .revenue-col:last-child { border-right: none; }
+  .revenue-col .num { font-family: 'JetBrains Mono', monospace; font-size: 26px; color: var(--volt); margin-bottom: 8px; }
+  .revenue-col h4 { font-size: 15px; margin-bottom: 8px; }
+  .revenue-col p { color: var(--text-dim); font-size: 13px; }
+
+  .steps { counter-reset: step; }
+  .step { display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+  .step:last-child { border-bottom: none; }
+  .step-num { font-family: 'JetBrains Mono', monospace; font-size: 20px; color: var(--volt); width: 32px; flex-shrink: 0; }
+  .step h4 { font-size: 15px; margin-bottom: 4px; }
+  .step p { color: var(--text-dim); font-size: 14px; }
+
+  .rarity-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px; }
+  .rarity-chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
+    padding: 5px 11px;
+  }
+  .rc-common { background: #6B7280; color: var(--void); }
+  .rc-rare { background: var(--volt); color: var(--void); }
+  .rc-epic { background: var(--plasma); color: #fff; }
+  .rc-legendary { background: var(--amber); color: var(--void); }
+
+  footer { padding: 38px 0; color: var(--text-dim); font-size: 13px; font-family: 'JetBrains Mono', monospace; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+  @media (max-width: 720px) {
+    h1 { font-size: 32px; }
+    .feature-grid, .revenue-row { grid-template-columns: 1fr; }
+    .revenue-col { border-right: none; border-bottom: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="brand">Radar de <span>Producto</span></div>
+    <div>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#ingresos">Modelo</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+  </nav>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div class="eyebrow">ANÁLISIS DE PRODUCTOS DE MODA</div>
+    <h1>Encontrá la <span class="hl">mejor oportunidad</span> antes que nadie, entre las tres plataformas más grandes.</h1>
+    <p class="lede">
+      Comparamos precios, demanda y tendencias de productos de moda en Mercado Libre,
+      Amazon y TikTok Shop en tiempo real, con un score de oportunidad calculado
+      automáticamente para cada producto — y clasificado por rareza para verlo de un vistazo.
+    </p>
+    <div class="cta-row">
+      <a href="#contacto" class="btn btn-primary">Sumarme al proyecto</a>
+      <a href="#como-funciona" class="btn btn-secondary">Ver cómo funciona</a>
+    </div>
+    <div class="platforms">
+      <span class="platform-tag">Mercado Libre</span>
+      <span class="platform-tag">Amazon</span>
+      <span class="platform-tag">TikTok Shop</span>
+    </div>
+    <div class="rarity-strip">
+      <span class="rarity-chip rc-common">COMÚN</span>
+      <span class="rarity-chip rc-rare">RARA</span>
+      <span class="rarity-chip rc-epic">ÉPICA</span>
+      <span class="rarity-chip rc-legendary">LEGENDARIA</span>
+    </div>
+  </div>
+</header>
+
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="section-label">Qué hace</div>
+    <h2>Todo el análisis en un solo lugar, sin abrir diez pestañas.</h2>
+    <div class="feature-grid">
+      <div class="feature">
+        <h3>Búsqueda y comparación</h3>
+        <p>Traemos el mismo tipo de producto de las tres plataformas y lo ordenamos por precio, rating y volumen de ventas.</p>
+      </div>
+      <div class="feature">
+        <h3>Score de oportunidad</h3>
+        <p>Un cálculo propio combina precio relativo, demanda y tendencia para decirte qué productos conviene promocionar hoy.</p>
+      </div>
+      <div class="feature">
+        <h3>Visor 3D</h3>
+        <p>Visualizá cada producto en volumen directamente en el dashboard, sin salir de la página.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ingresos">
+  <div class="wrap">
+    <div class="section-label">Modelo</div>
+    <h2>Tres formas de generar ingresos, combinadas.</h2>
+    <div class="revenue-row">
+      <div class="revenue-col">
+        <div class="num">01</div>
+        <h4>Afiliados</h4>
+        <p>Comisión por cada venta referida a Mercado Libre, Amazon o TikTok Shop.</p>
+      </div>
+      <div class="revenue-col">
+        <div class="num">02</div>
+        <h4>Dropshipping</h4>
+        <p>Compra al proveedor y reventa directa, con margen calculado automáticamente.</p>
+      </div>
+      <div class="revenue-col">
+        <div class="num">03</div>
+        <h4>Suscripción</h4>
+        <p>Otros vendedores pagan por acceder al análisis y al dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-label">Cómo funciona</div>
+    <h2>De la búsqueda a la venta, en cuatro pasos.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div><h4>Ingesta</h4><p>El sistema busca productos de moda en las tres plataformas de forma automática.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div><h4>Análisis</h4><p>Cada producto recibe un score de oportunidad basado en precio, demanda y tendencia.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div><h4>Visualización</h4><p>Vés todo en el dashboard: ranking, comparación de precios y vista 3D.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div><h4>Monetización</h4><p>Generás ingresos por afiliación, reventa directa o suscripción de otros vendedores.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer id="contacto">
+    <div>© 2026 Radar de Producto</div>
+    <div>Proyecto en desarrollo — moda</div>
+  </footer>
+</div>
+
+</body>
+</html>
