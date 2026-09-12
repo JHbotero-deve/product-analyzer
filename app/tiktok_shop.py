@@ -25,7 +25,8 @@ def _sign_request(app_secret: str, path: str, params: dict, body: str = "") -> s
     Los parámetros 'sign' y 'access_token' se excluyen del cálculo (van
     en la request pero no entran en la firma).
     """
-    filtered = {k: v for k, v in params.items() if k not in ("sign", "access_token")}
+    filtered = {k: v for k, v in params.items(
+    ) if k not in ("sign", "access_token")}
     sorted_params = "".join(f"{k}{v}" for k, v in sorted(filtered.items()))
     base_string = f"{app_secret}{path}{sorted_params}{body}{app_secret}"
     signed = hmac.new(
@@ -72,7 +73,7 @@ def search_products(keyword: str, page_size: int = 10):
     }
 
     resp = requests.post(BASE_URL + path, params=params, headers=headers,
-                          data=body_json, timeout=15)
+                            data=body_json, timeout=15)
     resp.raise_for_status()
     data = resp.json()
 

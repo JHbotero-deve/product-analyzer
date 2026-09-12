@@ -169,7 +169,7 @@ def top_opportunities(limit: int = Query(20, le=100)):
             JOIN platforms pl ON pl.id = p.platform_id
             ORDER BY s.opportunity_score DESC
             LIMIT %s
-            """,
+            """
             (limit,),
         )
         results = cur.fetchall()
