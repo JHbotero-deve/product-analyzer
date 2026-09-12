@@ -5,6 +5,10 @@ from psycopg2.extras import RealDictCursor
 
 def get_connection():
     """Abre una conexión a Postgres usando variables de entorno."""
+    db_url = os.getenv("DATABASE_URL")
+    if db_url:
+        return psycopg2.connect(db_url, cursor_factory=RealDictCursor)
+
     return psycopg2.connect(
         host=os.getenv("DB_HOST", "db"),
         port=os.getenv("DB_PORT", "5432"),
