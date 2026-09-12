@@ -20,7 +20,10 @@ MELI_SEARCH_URL = "https://api.mercadolibre.com/sites/MLA/search"
 def fetch_mercadolibre(query: str, limit: int = 20):
     """Trae productos reales desde la API pública de Mercado Libre."""
     params = {"q": query, "limit": limit}
-    resp = requests.get(MELI_SEARCH_URL, params=params, timeout=10)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    resp = requests.get(MELI_SEARCH_URL, params=params, headers=headers, timeout=10)
     resp.raise_for_status()
     data = resp.json()
 
