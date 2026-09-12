@@ -5,6 +5,7 @@ from db import get_connection, upsert_product
 from ingest import fetch_mercadolibre, fetch_amazon, fetch_tiktok
 from analysis import score_product
 from notifications import send_telegram_alert
+from init_db import init_database
 
 CATEGORY = "ropa"
 SEARCH_TERMS = ["remera hombre", "campera mujer", "zapatillas urbanas"]
@@ -66,11 +67,12 @@ def run_pipeline():
 
 
 if __name__ == "__main__":
+    from init_db import init_database
+    init_database()  # Inicializa las tablas
     run_pipeline()  # corre una vez al iniciar
+# 3. Repetir cada 6 horas para mantener precios e histórico actualizados
+schedule.every(6).hours.do(run_pipeline)
 
-    # Repite cada 6 horas para mantener precios e histórico actualizados
-    schedule.every(6).hours.do(run_pipeline)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(30)
+while True:
+    schedule.run_pending()
+    time.sleep(30)
